@@ -262,7 +262,6 @@ app.component('searchView', {
     };
 
     ctrl.download = function(app) {
-      if (app.disabled) {
         return;
       }
       app.downloading = true;
