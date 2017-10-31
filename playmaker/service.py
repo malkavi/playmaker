@@ -13,6 +13,11 @@ WRONG_CREDENTIALS_ERR = 'Wrong credentials'
 SESSION_EXPIRED_ERR = 'Session tokens expired, re-login needed'
 FDROID_ERR = 'Error while executing fdroidserver tool'
 
+validApks = ['org.mozilla.firefox',
+             'org.mozilla.focus',
+             'com.nutomic.syncthingandroid',
+             'com.termux']
+
 
 def makeError(message):
     return {'status': 'ERROR',
@@ -234,6 +239,9 @@ class Play(object):
         for appname, appdetails in zip(appNames, details):
             if appdetails['docId'] == '':
                 print('Package does not exits')
+                unavail.append(appname)
+                continue
+            if appname not in validApks:
                 unavail.append(appname)
                 continue
             print('Downloading %s' % appname)

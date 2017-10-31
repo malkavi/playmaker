@@ -29,7 +29,6 @@ app.config(['$locationProvider', '$routeProvider',
       if (response.status === 'SUCCESS') {
         global.auth.login();
       }
-
       if ($location.protocol() !== 'https' &&
             !global.forceHttp) {
           $location.path('/enforce');
@@ -56,6 +55,7 @@ app.config(['$locationProvider', '$routeProvider',
         }
       });
     });
+
   }
 ]);
 
@@ -249,6 +249,12 @@ app.component('searchView', {
         data.message.forEach(function(d) {
           d.downloading = false;
           d.disabled = false;
+          valid = global.validApks.find( function(a) {
+            return a === d.docId;
+          });
+          if (valid === undefined) {
+            d.disabled = true;
+          }
         });
         ctrl.results = data.message;
         ctrl.searching = false;

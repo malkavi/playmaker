@@ -114,6 +114,10 @@
   color: #333333;
 }
 
+.demo-text {
+  text-align:center;
+}
+
 .dl-button:hover {
   color: #333333;
 }

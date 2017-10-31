@@ -20,6 +20,13 @@ angular.module('playmaker').service('global', ['$http', function($http) {
 
   this.forceHttp = false;
 
+  this.validApks = [
+    'org.mozilla.focus',
+    'org.mozilla.firefox',
+    'com.mapswithme.maps.pro',
+    'org.thoughtcrime.securesms'
+  ];
+
   this.auth = new AuthManager();
 
   var screenWidth = window.innerWidth;
@@ -149,4 +156,3 @@ angular.module('playmaker').service('api', ['$http', '$location', 'global', func
   };
 
 }]);
-
