@@ -15,8 +15,8 @@ FDROID_ERR = 'Error while executing fdroidserver tool'
 
 validApks = ['org.mozilla.firefox',
              'org.mozilla.focus',
-             'com.nutomic.syncthingandroid',
-             'com.termux']
+             'com.mapswithme.maps.pro',
+             'org.thoughtcrime.securesms']
 
 
 def makeError(message):
