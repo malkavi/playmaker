@@ -19,10 +19,10 @@ setup(name='playmaker',
           ],
       },
       install_requires=[
-            'pyaxmlparser',
+            'pyaxmlparser==0.3.7',
             'pycryptodome',
-            'tornado',
-            'gpapi>=0.4.2',
+            'tornado<5',
+            'gpapi==0.4.2',
             'tornado-crontab'
       ],
       scripts=['pm-server']
