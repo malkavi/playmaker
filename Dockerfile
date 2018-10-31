@@ -19,16 +19,16 @@ RUN apt-get update && \
 
 RUN pip3 install fdroidserver
 
-RUN wget https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip \
-    && echo "444e22ce8ca0f67353bda4b85175ed3731cae3ffa695ca18119cbacef1c1bea0  sdk-tools-linux-3859397.zip" | sha256sum -c \
-    && unzip sdk-tools-linux-3859397.zip \
-    && rm sdk-tools-linux-3859397.zip
+RUN wget https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip \
+    && echo "92ffee5a1d98d856634e8b71132e8a95d96c83a63fde1099be3d86df3106def9 sdk-tools-linux-4333796.zip" | sha256sum -c \
+    && unzip sdk-tools-linux-4333796.zip \
+    && rm sdk-tools-linux-4333796.zip
 
 RUN mkdir /opt/android-sdk-linux
 ENV ANDROID_HOME=/opt/android-sdk-linux
 ENV PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
-RUN echo 'y' | tools/bin/sdkmanager --sdk_root=/opt/android-sdk-linux --verbose "platforms;android-26" \
-    && tools/bin/sdkmanager --sdk_root=/opt/android-sdk-linux --verbose "build-tools;26.0.1" \
+RUN echo 'y' | tools/bin/sdkmanager --sdk_root=/opt/android-sdk-linux --verbose "platforms;android-28" \
+    && tools/bin/sdkmanager --sdk_root=/opt/android-sdk-linux --verbose "build-tools;28.0.3" \
     && rm -rf tools
 
 RUN mkdir -p /data/fdroid/repo && \
