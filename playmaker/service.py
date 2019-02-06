@@ -1,4 +1,4 @@
-from gpapi.googleplay import GooglePlayAPI, LoginError, RequestError
+from gpapi.googleplay import GooglePlayAPI, LoginError, RequestError, SecurityCheckError
 from pyaxmlparser import APK
 from subprocess import Popen, PIPE
 
@@ -54,6 +54,8 @@ class Play(object):
         self.loggedIn = False
         self._email = None
         self._passwd = None
+        self._gsfId = None
+        self._token = None
         self._last_fdroid_update = None
 
         # configuring download folder
@@ -75,7 +77,12 @@ class Play(object):
         timezone = os.environ.get('LANG_TIMEZONE')
         if timezone is None:
             timezone = 'Europe/Berlin'
-        self.service = GooglePlayAPI(locale, timezone)
+        device = os.environ.get('DEVICE_CODE')
+        if device is None:
+            self.service = GooglePlayAPI(locale, timezone)
+        else:
+            self.service = GooglePlayAPI(locale, timezone,
+                    device_codename=device)
 
     def fdroid_init(self):
         found = False
@@ -170,29 +177,47 @@ class Play(object):
         self._email = email
         self._passwd = password
 
+    def set_token_credentials(self, gsfId, token):
+        self._gsfId = int(gsfId, 16)
+        self._token = token
+
+    def has_credentials(self):
+        passwd_credentials = self._email is not None and self._passwd is not None
+        token_credentials = self._gsfId is not None and self._token is not None
+        return passwd_credentials or token_credentials
+
     def login(self):
         if self.loggedIn:
-            return {'status': 'SUCCESS', 'message': 'OK'}
+            return {'status': 'SUCCESS', 'securityCheck': False, 'message': 'OK'}
 
         try:
-            if self._email is None or self._passwd is None:
-                raise LoginError("either username or password is null")
+            if not self.has_credentials():
+                raise LoginError("missing credentials")
             self.service.login(self._email,
                                self._passwd,
-                               None, None)
+                               self._gsfId,
+                               self._token)
             self.loggedIn = True
-            return {'status': 'SUCCESS', 'message': 'OK'}
+            return {'status': 'SUCCESS', 'securityCheck': False, 'message': 'OK'}
         except LoginError as e:
             print('LoginError: {0}'.format(e))
             self.loggedIn = False
             return {'status': 'ERROR',
+                    'securityCheck': False,
                     'message': 'Wrong credentials'}
+        except SecurityCheckError as e:
+            print('SecurityCheckError: {0}'.format(e))
+            self.loggedIn = False
+            return {'status': 'ERROR',
+                    'securityCheck': True,
+                    'message': 'Need security check'}
         except RequestError as e:
             # probably tokens are invalid, so it is better to
             # invalidate them
             print('RequestError: {0}'.format(e))
             self.loggedIn = False
             return {'status': 'ERROR',
+                    'securityCheck': False,
                     'message': 'Request error, probably invalid token'}
 
     def update_state(self):
